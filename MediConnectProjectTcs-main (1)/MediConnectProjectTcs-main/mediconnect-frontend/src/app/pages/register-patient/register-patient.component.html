@@ -1,0 +1,74 @@
+<div class="auth-page flex justify-center items-center py-20">
+  <div class="card auth-card w-full" style="max-width: 500px;">
+    <div class="text-center mb-8">
+      <h2 class="h3 mb-2">Patient Registration</h2>
+      <p class="text-muted">Create an account to search doctors and book appointments.</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-alert mb-6 p-4 rounded-md">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="bg-success text-white p-4 rounded-md mb-6 text-center">
+      {{ successMessage }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name</label>
+        <input id="name" type="text" formControlName="name" class="form-control" 
+               [ngClass]="{'border-danger': submitted && f['name'].errors}" placeholder="John Doe">
+        <div *ngIf="submitted && f['name'].errors" class="form-error">
+          <div *ngIf="f['name'].errors['required']">Name is required</div>
+          <div *ngIf="f['name'].errors['pattern']">Name must only contain alphabetic characters</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input id="email" type="email" formControlName="email" class="form-control" 
+               [ngClass]="{'border-danger': submitted && f['email'].errors}" placeholder="you@example.com" 
+               autocomplete="new-email" readonly onfocus="this.removeAttribute('readonly');">
+        <div *ngIf="submitted && f['email'].errors" class="form-error">
+          <div *ngIf="f['email'].errors['required']">Email is required</div>
+          <div *ngIf="f['email'].errors['email'] || f['email'].errors['pattern']">Enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="mobile">Mobile Number</label>
+        <input id="mobile" type="text" formControlName="mobile" class="form-control" 
+               [ngClass]="{'border-danger': submitted && f['mobile'].errors}" placeholder="10-digit mobile number">
+        <div *ngIf="submitted && f['mobile'].errors" class="form-error">
+          <div *ngIf="f['mobile'].errors['required']">Mobile number is required</div>
+          <div *ngIf="f['mobile'].errors['pattern']">Must be 10 digits and start with 6, 7, 8, or 9</div>
+        </div>
+      </div>
+
+      <div class="form-group mb-6">
+        <label class="form-label" for="password">Password</label>
+        <input id="password" type="password" formControlName="password" class="form-control"
+               [ngClass]="{'border-danger': submitted && f['password'].errors}" placeholder="••••••••" 
+               autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
+        <div *ngIf="submitted && f['password'].errors" class="form-error">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div *ngIf="f['password'].errors['pattern']">
+            Must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full" [disabled]="isLoading">
+        <span *ngIf="isLoading">Registering...</span>
+        <span *ngIf="!isLoading">Register as Patient</span>
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <p class="text-muted text-sm">
+        Already have an account? <a routerLink="/login" class="text-primary font-medium">Login instead</a>
+      </p>
+    </div>
+  </div>
+</div>

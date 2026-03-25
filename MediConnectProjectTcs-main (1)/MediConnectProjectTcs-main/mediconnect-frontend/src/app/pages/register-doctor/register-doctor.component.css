@@ -1,0 +1,26 @@
+.auth-page {
+  min-height: calc(100vh - 80px);
+  background-color: var(--bg-light);
+}
+
+.auth-card {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.error-alert {
+  background-color: #fef2f2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  font-size: 0.875rem;
+}
+
+.border-danger {
+  border-color: var(--danger);
+}
+
+.border-danger:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}

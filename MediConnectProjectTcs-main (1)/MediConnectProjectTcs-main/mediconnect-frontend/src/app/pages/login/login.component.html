@@ -1,0 +1,84 @@
+<div class="auth-page flex justify-center items-center py-20">
+  <div class="card auth-card w-full" style="max-width: 480px;">
+    <div class="text-center mb-8">
+      <div class="auth-logo mb-4">🏥</div>
+      <h2 class="h3 mb-2">Welcome Back</h2>
+      <p class="text-muted">Enter your credentials to access your account.</p>
+    </div>
+
+    <!-- Role Selector -->
+    <div class="role-selector-modern mb-8">
+      <p class="text-center font-bold mb-4 text-muted uppercase tracking-wider text-xs">I am a...</p>
+      <div class="role-grid">
+        <div class="role-option" [class.active]="selectedRole === 'PATIENT'" (click)="selectedRole = 'PATIENT'">
+          <div class="role-icon-box">👤</div>
+          <span>Patient</span>
+        </div>
+        <div class="role-option" [class.active]="selectedRole === 'DOCTOR'" (click)="selectedRole = 'DOCTOR'">
+          <div class="role-icon-box">👨‍⚕️</div>
+          <span>Doctor</span>
+        </div>
+        <div class="role-option" [class.active]="selectedRole === 'ADMIN'" (click)="selectedRole = 'ADMIN'">
+          <div class="role-icon-box">🛡️</div>
+          <span>Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-alert mb-6 p-4 rounded-md">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-control"
+          [ngClass]="{'border-danger': submitted && f['email'].errors}"
+          placeholder="you@example.com"
+          autocomplete="new-email"
+          readonly
+          onfocus="this.removeAttribute('readonly');"
+        >
+        <div *ngIf="submitted && f['email'].errors" class="form-error">
+          <div *ngIf="f['email'].errors['required']">Email is required</div>
+          <div *ngIf="f['email'].errors['email']">Enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="form-group mb-6">
+        <label class="form-label" for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="form-control"
+          [ngClass]="{'border-danger': submitted && f['password'].errors}"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          readonly
+          onfocus="this.removeAttribute('readonly');"
+        >
+        <div *ngIf="submitted && f['password'].errors" class="form-error">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full" [disabled]="isLoading">
+        <span *ngIf="isLoading">Logging in...</span>
+        <span *ngIf="!isLoading">Login as {{ selectedRole | titlecase }}</span>
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <p class="text-muted text-sm">
+        Don't have an account? <br/>
+        <a routerLink="/register-patient" class="text-primary font-medium">Register as Patient</a> or
+        <a routerLink="/register-doctor" class="text-primary font-medium">Register as Doctor</a>
+      </p>
+    </div>
+  </div>
+</div>

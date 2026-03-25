@@ -1,0 +1,43 @@
+<footer class="footer">
+  <div class="container grid grid-cols-4 gap-8">
+    <div class="footer-brand">
+      <div class="logo flex items-center gap-2 mb-4">
+        <div class="logo-icon-small">M</div>
+        <span class="logo-text">Mediconnect</span>
+      </div>
+      <p class="text-muted">Your trusted platform for seamless healthcare appointments and secure medical records.</p>
+    </div>
+    
+    <div class="footer-links">
+      <h4 class="footer-heading">For Patients</h4>
+      <ul>
+        <li><a routerLink="/" fragment="search">Search Doctors</a></li>
+        <li><a routerLink="/login" [queryParams]="{role: 'patient'}">Book Appointment</a></li>
+        <li><a routerLink="/login" [queryParams]="{role: 'patient'}">Health Records</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-links">
+      <h4 class="footer-heading">For Doctors</h4>
+      <ul>
+        <li><a routerLink="/register-doctor">Add yourself to MediConnect</a></li>
+        <li><a routerLink="/login" [queryParams]="{role: 'doctor'}">Doctor Login</a></li>
+        <li><a routerLink="/help">How it works for Doctors</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-links">
+      <h4 class="footer-heading">Support</h4>
+      <ul>
+        <li><a routerLink="/help">Help Center</a></li>
+        <li><a routerLink="/help" fragment="contact">Contact Us</a></li>
+        <li><p class="contact-info">📞 +91 9179677123</p></li>
+        <li><p class="contact-info">📧 Mediconnect@gmail.com</p></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="footer-bottom text-center">
+    <p class="text-muted">&copy; {{ currentYear }} Mediconnect. All rights reserved.</p>
+  </div>
+</footer>

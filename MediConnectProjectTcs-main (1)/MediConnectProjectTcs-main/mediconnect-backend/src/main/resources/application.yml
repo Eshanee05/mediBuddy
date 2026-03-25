@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: mediconnect-backend
+  datasource:
+    # H2 In-Memory Configuration (Used to unblock immediate run while MySQL password is being verified)
+    url: jdbc:h2:mem:mediconnect_db;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+    # Original MySQL Config (Commented out):
+    # url: jdbc:mysql://127.0.0.1:3306/mediconnect_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    # username: root
+    # password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 25MB
+      max-request-size: 25MB
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 86400000 # 24 hours in milliseconds
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.mediconnect: INFO
+
+file:
+  upload-dir: uploads/medical-docs

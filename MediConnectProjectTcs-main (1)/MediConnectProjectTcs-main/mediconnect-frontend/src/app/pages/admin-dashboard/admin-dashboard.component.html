@@ -1,0 +1,217 @@
+<div class="dashboard-page py-12">
+  <div class="container">
+    
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="h2">Admin Dashboard</h2>
+        <p class="text-muted">System Overview & Management</p>
+      </div>
+      
+      <div class="tabs flex gap-4">
+        <button class="btn" [ngClass]="activeTab === 'overview' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'overview'">Overview</button>
+        <button class="btn" [ngClass]="activeTab === 'verification' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'verification'">Doctor Verification</button>
+        <button class="btn" [ngClass]="activeTab === 'doctors' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'doctors'">Manage Doctors</button>
+        <button class="btn" [ngClass]="activeTab === 'patients' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'patients'">Patients</button>
+      </div>
+    </div>
+
+    <div *ngIf="message" class="mb-6 p-4 rounded-md" [ngClass]="isError ? 'bg-danger text-white' : 'bg-success text-white'">
+      {{ message }}
+    </div>
+
+    <!-- Overview Tab -->
+    <div *ngIf="activeTab === 'overview'" class="animate-fade-in">
+      <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="card bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-l-primary flex items-center justify-between">
+          <div>
+            <p class="text-muted font-semibold mb-1">Total Patients</p>
+            <h3 class="h2 text-primary">{{ stats?.totalPatients || 0 }}</h3>
+          </div>
+          <div class="text-4xl text-primary opacity-50">👤</div>
+        </div>
+        
+        <div class="card bg-gradient-to-br from-sky-50 to-blue-50 border-l-4 border-l-secondary flex items-center justify-between">
+          <div>
+            <p class="text-muted font-semibold mb-1">Total Doctors</p>
+            <h3 class="h2 text-secondary">{{ stats?.totalDoctors || 0 }}</h3>
+          </div>
+          <div class="text-4xl text-secondary opacity-50">👨‍⚕️</div>
+        </div>
+
+        <div class="card bg-gradient-to-br from-emerald-50 to-green-50 border-l-4 border-l-success flex items-center justify-between">
+          <div>
+            <p class="text-muted font-semibold mb-1">Total Appointments</p>
+            <h3 class="h2 text-success">{{ stats?.totalAppointments || 0 }}</h3>
+          </div>
+          <div class="text-4xl text-success opacity-50">📅</div>
+        </div>
+      </div>
+      
+      <!-- Charts integration via Chart.js -->
+      <div class="card mb-8">
+        <h3 class="h4 mb-4">System Growth Overview</h3>
+        <div class="chart-container" style="position: relative; height:400px; width:100%">
+          <canvas id="overviewChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verification Tab -->
+    <div *ngIf="activeTab === 'verification'" class="animate-fade-in card">
+      <h3 class="h4 mb-6">Pending Doctor Approvals</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>License ID</th>
+              <th>Specialization</th>
+              <th>Experience</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let doc of pendingDoctors">
+              <td class="font-medium">{{ doc.name }}</td>
+              <td>{{ doc.doctorId }}</td>
+              <td>{{ doc.specialization }}</td>
+              <td>{{ doc.experience }} Yrs</td>
+              <td>
+                <div class="flex gap-2">
+                  <button class="badge badge-success cursor-pointer" (click)="verifyDoctor(doc.id, true)">Approve</button>
+                  <button class="badge badge-danger cursor-pointer" (click)="verifyDoctor(doc.id, false)">Reject</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="pendingDoctors.length === 0">
+              <td colspan="5" class="text-center py-8 text-muted">No pending verifications.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Manage Doctors Tab -->
+    <div *ngIf="activeTab === 'doctors'" class="animate-fade-in card">
+      <h3 class="h4 mb-6">All Doctors</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Specialization</th>
+              <th>Status</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let doc of allDoctors">
+              <td class="font-medium">{{ doc.name }}</td>
+              <td>{{ doc.user?.email }}</td>
+              <td>{{ doc.specialization }}</td>
+              <td>
+                <span class="badge" [ngClass]="doc.user?.active ? 'badge-success' : 'badge-danger'">
+                  {{ doc.user?.active ? 'Active' : 'Inactive' }}
+                </span>
+                <span class="badge ml-2" [ngClass]="doc.verificationStatus === 'VERIFIED' ? 'badge-primary' : 'badge-warning'">
+                  {{ doc.verificationStatus }}
+                </span>
+              </td>
+              <td>⭐ {{ doc.rating }}</td>
+              <td>
+                <div class="flex gap-2">
+                  <button class="btn btn-outline btn-sm" (click)="toggleDoctorStatus(doc.id)">
+                    {{ doc.user?.active ? 'Deactivate' : 'Activate' }}
+                  </button>
+                  <button class="btn btn-primary btn-sm" (click)="viewAppointments(doc)">
+                    Appointments
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="allDoctors.length === 0">
+              <td colspan="6" class="text-center py-8 text-muted">No doctors found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Patients Tab -->
+    <div *ngIf="activeTab === 'patients'" class="animate-fade-in card">
+      <h3 class="h4 mb-6">Registered Patients</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let patient of allPatients">
+              <td class="font-medium">{{ patient.name }}</td>
+              <td>{{ patient.user?.email }}</td>
+              <td>{{ patient.mobile }}</td>
+              <td>
+                <span class="badge" [ngClass]="patient.user?.active ? 'badge-success' : 'badge-danger'">
+                  {{ patient.user?.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="allPatients.length === 0">
+              <td colspan="4" class="text-center py-8 text-muted">No patients found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Appointments Modal -->
+    <div *ngIf="selectedDoctorAppointments !== null" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <div>
+            <h3 class="h4 text-main mb-1">Appointments for Dr. {{ selectedDoctorName }}</h3>
+            <p class="text-sm text-muted">Complete historical tracking</p>
+          </div>
+          <button class="btn btn-icon text-gray-400 hover:text-danger hover:bg-red-50" (click)="closeAppointmentsModal()">✕</button>
+        </div>
+        
+        <div class="p-6 overflow-y-auto flex-1 bg-white">
+          <table class="w-full text-left border-collapse" *ngIf="selectedDoctorAppointments.length > 0">
+            <thead>
+              <tr class="bg-light text-main text-sm">
+                <th class="p-3 border-b">Patient Name</th>
+                <th class="p-3 border-b">Date</th>
+                <th class="p-3 border-b">Time</th>
+                <th class="p-3 border-b">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let apt of selectedDoctorAppointments" class="border-b last:border-0 hover:bg-gray-50">
+                <td class="p-3 font-medium">{{ apt.patient?.name || 'Unknown' }}</td>
+                <td class="p-3">{{ apt.appointmentDate | date:'mediumDate' }}</td>
+                <td class="p-3">{{ apt.timeSlot }}</td>
+                <td class="p-3">
+                  <span class="badge" [ngClass]="{'badge-success': apt.status === 'COMPLETED', 'badge-primary': apt.status === 'CONFIRMED', 'badge-warning': apt.status === 'PENDING', 'badge-danger': apt.status === 'CANCELLED'}">
+                    {{ apt.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div *ngIf="selectedDoctorAppointments.length === 0" class="text-center py-12 text-muted">
+            <div class="text-4xl mb-3 opacity-50">📁</div>
+            <p>No appointments found for this doctor.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,36 @@
+.dashboard-page {
+  min-height: calc(100vh - 80px);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.max-w-lg {
+  max-width: 32rem;
+}
+
+.min-h-\[100px\] {
+  min-height: 100px;
+}
+
+.min-h-\[80px\] {
+  min-height: 80px;
+}
+
+.bg-danger { background-color: var(--danger); }
+.bg-success { background-color: var(--success); }
+.text-white { color: white; }
+.text-danger { color: var(--danger); }
+.border-danger { border-color: var(--danger); }
+.border-danger:hover { background-color: var(--danger); color: white; }

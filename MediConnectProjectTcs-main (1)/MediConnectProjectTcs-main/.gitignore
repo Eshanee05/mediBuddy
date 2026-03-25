@@ -1,0 +1,11 @@
+# Zip files
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Root level ignores
+.git/
+node_modules/
+target/

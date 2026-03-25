@@ -1,0 +1,219 @@
+<div class="dashboard-page py-12">
+  <div class="container">
+    
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="h2">Doctor Dashboard</h2>
+        <p class="text-muted">Manage your appointments and view patient records.</p>
+      </div>
+      
+      <div class="tabs flex gap-4">
+        <button class="btn" [ngClass]="activeTab === 'today' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'today'">Today's Appointments</button>
+        <button class="btn" [ngClass]="activeTab === 'all' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'all'">All Appointments</button>
+        <button class="btn" [ngClass]="activeTab === 'records' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'records'">Patient Records</button>
+        <button class="btn" [ngClass]="activeTab === 'availability' ? 'btn-primary' : 'btn-outline'" (click)="activeTab = 'availability'">Manage Availability</button>
+      </div>
+    </div>
+
+    <div *ngIf="message" class="mb-6 p-4 rounded-md" [ngClass]="isError ? 'bg-danger text-white' : 'bg-success text-white'">
+      {{ message }}
+    </div>
+
+    <!-- Today's / All Appointments Tab -->
+    <div *ngIf="activeTab === 'today' || activeTab === 'all'" class="animate-fade-in card">
+      <h3 class="h4 mb-6">{{ activeTab === 'today' ? "Today's Appointments" : "All Appointments" }}</h3>
+      <div class="grid gap-4">
+        <div *ngFor="let appt of (activeTab === 'today' ? todayAppointments : allAppointments)" 
+             class="border rounded-md p-4 flex justify-between items-center"
+             [ngClass]="{'bg-light opacity-60': appt.status === 'COMPLETED' || appt.status === 'CANCELLED'}">
+             
+          <div>
+            <div class="flex items-center gap-3 mb-1">
+              <span class="font-bold text-lg">{{ appt.patient?.name }}</span>
+              <span class="text-xs bg-gray-200 px-2 py-0.5 rounded font-mono" title="Patient ID">[{{ appt.patient?.patientIdentifier }}]</span>
+              <span class="badge" [ngClass]="{
+                'badge-success': appt.status === 'CONFIRMED',
+                'badge-warning': appt.status === 'PENDING',
+                'badge-primary': appt.status === 'COMPLETED',
+                'badge-danger': appt.status === 'CANCELLED'
+              }">{{ appt.status }}</span>
+            </div>
+            <p class="text-muted text-sm">Date: {{ appt.appointmentDate }} | Time: {{ appt.timeSlot }}</p>
+            <p class="text-muted text-sm">Contact: {{ appt.patient?.mobile }}</p>
+          </div>
+          
+          <div class="flex gap-2" *ngIf="appt.status === 'CONFIRMED'">
+            <input type="file" #fileInp class="hidden" (change)="onFileSelected($event, appt.patient?.id)">
+            <button class="btn btn-outline btn-sm" (click)="fileInp.click()" [disabled]="isUploading">
+               {{ isUploading && uploadPatientId === appt.patient?.id ? '...' : 'Upload Report' }}
+            </button>
+            <button class="btn btn-outline text-danger border-danger btn-sm" (click)="updateStatus(appt.id, 'CANCELLED')">Cancel</button>
+            <button class="btn btn-primary btn-sm" (click)="openPrescriptionModal(appt)">Complete & Prescribe</button>
+          </div>
+        </div>
+        
+        <div *ngIf="(activeTab === 'today' ? todayAppointments : allAppointments).length === 0" class="text-center py-8 text-muted border border-dashed rounded-md">
+          No appointments found.
+        </div>
+      </div>
+    </div>
+
+    <!-- Patient Records Tab -->
+    <div *ngIf="activeTab === 'records'" class="animate-fade-in card">
+      <h3 class="h4 mb-6">Patient Medical History</h3>
+      <div class="grid gap-6">
+        <div *ngFor="let record of medicalRecords" class="border rounded-lg p-6 bg-light border-l-4 border-l-primary">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h4 class="font-bold text-xl mb-1 text-main">{{ record.patient?.name }}</h4>
+              <p class="text-xs font-mono text-muted mb-2">Identifier: {{ record.patient?.patientIdentifier }}</p>
+              <p class="text-sm text-muted">Last Updated: {{ record.lastUpdatedAt | date:'mediumDate' }}</p>
+            </div>
+            <button class="btn btn-outline btn-sm" (click)="recordFileInp.click()" [disabled]="isUploading">
+                + Upload Doc
+            </button>
+            <input type="file" #recordFileInp class="hidden" (change)="onFileSelected($event, record.patient?.id)">
+          </div>
+
+          <div class="space-y-4 mt-6">
+            <h5 class="text-sm font-bold uppercase tracking-wider text-muted mb-2">Prescriptions</h5>
+            <div class="overflow-x-auto rounded-lg border border-secondary-light shadow-sm" *ngIf="record.prescriptions && record.prescriptions.length > 0">
+              <table class="w-full text-left border-collapse bg-white">
+                <thead>
+                  <tr class="bg-light text-main text-sm">
+                    <th class="p-3 border-b border-r hidden md:table-cell">Date of Visit</th>
+                    <th class="p-3 border-b border-r">Diagnosis</th>
+                    <th class="p-3 border-b border-r min-w-[200px]">Data Privacy</th>
+                    <th class="p-3 border-b w-[50px]">Secure Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pres of record.prescriptions" class="border-b last:border-0 hover:bg-gray-50">
+                    <td class="p-3 border-r text-sm text-muted whitespace-nowrap hidden md:table-cell">{{ pres.createdAt | date:'mediumDate' }}</td>
+                    <td class="p-3 border-r text-sm font-bold text-main">{{ pres.diagnosis }}</td>
+                    <td class="p-3 border-r text-sm text-red-600 italic">
+                       🔒 Information Secured. Access restricted to PDF download only.
+                    </td>
+                    <td class="p-3 text-center">
+                       <button class="btn btn-icon text-primary rounded bg-primary-light" title="Download PDF" (click)="downloadPrescription(pres, record.patient)">📥</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="!record.prescriptions || record.prescriptions.length === 0" class="text-sm text-muted italic">
+              No prescriptions found for this patient.
+            </div>
+
+            <h5 class="text-sm font-bold uppercase tracking-wider text-muted mt-6 mb-2">Shared Clinical Documents</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div *ngFor="let file of record.medicalFiles" class="bg-white p-3 rounded-md shadow-sm border border-primary-light flex justify-between items-center group">
+                <div class="flex items-center gap-2 overflow-hidden">
+                  <span class="text-lg">📄</span>
+                  <div class="overflow-hidden">
+                    <p class="text-xs font-bold truncate mb-0" [title]="file.originalName">{{ file.originalName }}</p>
+                    <p class="text-[10px] text-muted">{{ file.uploadedAt | date:'shortDate' }}</p>
+                  </div>
+                </div>
+                <button class="btn btn-icon btn-sm opacity-0 group-hover:opacity-100 transition-opacity" (click)="viewFile(file.id)" title="View File">👁️</button>
+              </div>
+            </div>
+            <div *ngIf="!record.medicalFiles || record.medicalFiles.length === 0" class="text-sm text-muted italic">
+              No shared documents found.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability Tab -->
+    <div *ngIf="activeTab === 'availability'" class="animate-fade-in card">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="h4">Set Your Working Hours</h3>
+        <button class="btn btn-primary" (click)="saveAvailability()">Save All Changes</button>
+      </div>
+
+      <div class="space-y-6">
+        <div *ngFor="let day of daysOfWeek" class="border rounded-lg p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="font-bold text-lg text-primary">{{ day | titlecase }}</h4>
+            <button class="btn btn-outline btn-sm" (click)="addAvailability(day)">+ Add Slot</button>
+          </div>
+
+          <div class="grid gap-4">
+            <div *ngFor="let avail of availabilities; let i = index">
+              <div *ngIf="avail.dayOfWeek === day" class="flex items-center gap-4 bg-light p-3 rounded-md">
+                <div class="flex-1">
+                  <label class="text-xs text-muted block mb-1">Start Time</label>
+                  <input type="time" [(ngModel)]="avail.startTime" class="form-control form-control-sm">
+                </div>
+                <div class="flex-1">
+                  <label class="text-xs text-muted block mb-1">End Time</label>
+                  <input type="time" [(ngModel)]="avail.endTime" class="form-control form-control-sm">
+                </div>
+                <div class="flex-1">
+                  <label class="text-xs text-muted block mb-1">Slot Mins</label>
+                  <input type="number" [(ngModel)]="avail.slotDuration" class="form-control form-control-sm">
+                </div>
+                <button class="btn btn-outline text-danger border-none p-2 mt-4" (click)="removeAvailability(i)">🗑️</button>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="!hasAvailability(day)" class="text-sm text-muted italic">
+            Off work
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Prescription Modal -->
+<div *ngIf="selectedAppointment" class="modal-backdrop">
+  <div class="card modal-content animate-fade-in w-full max-w-lg">
+    <h3 class="h3 mb-2">Create Prescription</h3>
+    <p class="text-muted mb-6">for {{ selectedAppointment.patient?.name }} on {{ selectedAppointment.appointmentDate }}</p>
+    
+    <div class="form-group">
+      <label class="form-label">Diagnosis</label>
+      <input type="text" [(ngModel)]="prescriptionData.diagnosis" class="form-control" placeholder="E.g., Viral Fever">
+    </div>
+    
+    <div class="form-group mb-4">
+      <div class="flex justify-between items-center mb-2">
+        <label class="form-label mb-0">Medicines</label>
+        <button class="btn btn-sm btn-outline" (click)="addMedicine()">+ Add Medicine</button>
+      </div>
+      
+      <div *ngFor="let med of prescriptionData.medicinesList; let i = index" class="grid grid-cols-12 gap-2 mb-2 items-center bg-light p-2 rounded">
+        <div class="col-span-4">
+          <input type="text" [(ngModel)]="med.name" class="form-control form-control-sm" placeholder="Medicine Name">
+        </div>
+        <div class="col-span-2">
+          <input type="number" [(ngModel)]="med.days" class="form-control form-control-sm" placeholder="Days">
+        </div>
+        <div class="col-span-3">
+          <input type="text" [(ngModel)]="med.frequency" class="form-control form-control-sm" placeholder="e.g. 1-0-1">
+        </div>
+        <div class="col-span-2">
+          <input type="text" [(ngModel)]="med.remarks" class="form-control form-control-sm" placeholder="Remarks">
+        </div>
+        <div class="col-span-1 text-right">
+          <button class="text-danger hover:text-red-700" (click)="removeMedicine(i)">✕</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group mb-8">
+      <label class="form-label">Additional Notes (Optional)</label>
+      <textarea [(ngModel)]="prescriptionData.notes" class="form-control min-h-[80px]" placeholder="Rest for 3 days, drink lots of water..."></textarea>
+    </div>
+    
+    <div class="flex gap-4">
+      <button class="btn btn-outline flex-1" (click)="selectedAppointment = null">Cancel</button>
+      <button class="btn btn-primary flex-1" (click)="submitPrescription()" [disabled]="!prescriptionData.diagnosis || prescriptionData.medicinesList.length === 0 || !prescriptionData.medicinesList[0].name">Submit & Complete</button>
+    </div>
+  </div>
+</div>

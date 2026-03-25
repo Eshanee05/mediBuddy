@@ -1,0 +1,28 @@
+.dashboard-page {
+  min-height: calc(100vh - 80px);
+}
+
+.bg-gradient-to-br {
+  background-size: cover;
+}
+
+.border-l-4 {
+  border-left-width: 4px;
+}
+
+.border-l-primary { border-left-color: var(--primary); }
+.border-l-secondary { border-left-color: var(--secondary); }
+.border-l-success { border-left-color: var(--success); }
+
+.from-blue-50 { background-color: #eff6ff; }
+.from-sky-50 { background-color: #f0f9ff; }
+.from-emerald-50 { background-color: #ecfdf5; }
+
+.text-success { color: var(--success); }
+.bg-danger { background-color: var(--danger); }
+.bg-success { background-color: var(--success); }
+.text-white { color: white; }
+
+.cursor-pointer { cursor: pointer; }
+.opacity-50 { opacity: 0.5; }
+.ml-2 { margin-left: 0.5rem; }

@@ -1,0 +1,110 @@
+<div class="auth-page flex justify-center items-center py-20">
+  <div class="card auth-card w-full" style="max-width: 600px;">
+    <div class="text-center mb-8">
+      <h2 class="h3 mb-2">Doctor Registration</h2>
+      <p class="text-muted">Join Mediconnect to manage your digital practice.</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-alert mb-6 p-4 rounded-md">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="bg-success text-white p-4 rounded-md mb-6 text-center">
+      {{ successMessage }}
+      <br/><br/>
+      <a routerLink="/login" class="underline">Go to Login</a>
+    </div>
+
+    <form *ngIf="!successMessage" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input id="name" type="text" formControlName="name" class="form-control" 
+                 [ngClass]="{'border-danger': submitted && f['name'].errors}" placeholder="Dr. John Doe">
+          <div *ngIf="submitted && f['name'].errors" class="form-error">
+            <div *ngIf="f['name'].errors['required']">Name is required</div>
+            <div *ngIf="f['name'].errors['pattern']">Name must only contain alphabetic characters</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input id="email" type="email" formControlName="email" class="form-control" 
+                 [ngClass]="{'border-danger': submitted && f['email'].errors}" placeholder="john@hospital.com" 
+                 autocomplete="new-email" readonly onfocus="this.removeAttribute('readonly');">
+          <div *ngIf="submitted && f['email'].errors" class="form-error">
+            <div *ngIf="f['email'].errors['required']">Email is required</div>
+            <div *ngIf="f['email'].errors['email'] || f['email'].errors['pattern']">Enter a valid email address</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-group">
+          <label class="form-label" for="mobile">Mobile Number</label>
+          <input id="mobile" type="text" formControlName="mobile" class="form-control" 
+                 [ngClass]="{'border-danger': submitted && f['mobile'].errors}" placeholder="10-digit number">
+          <div *ngIf="submitted && f['mobile'].errors" class="form-error">
+            <div *ngIf="f['mobile'].errors['required']">Mobile number is required</div>
+            <div *ngIf="f['mobile'].errors['pattern']">Must be 10 digits and start with 6, 7, 8, or 9</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="doctorId">Medical License / ID</label>
+          <input id="doctorId" type="text" formControlName="doctorId" class="form-control" 
+                 [ngClass]="{'border-danger': submitted && f['doctorId'].errors}" placeholder="MMC12345">
+          <div *ngIf="submitted && f['doctorId'].errors" class="form-error">
+            <div *ngIf="f['doctorId'].errors['required']">License ID is required</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-group">
+          <label class="form-label" for="specialization">Specialization</label>
+          <input id="specialization" type="text" formControlName="specialization" class="form-control" 
+                 [ngClass]="{'border-danger': submitted && f['specialization'].errors}" placeholder="Cardiology">
+          <div *ngIf="submitted && f['specialization'].errors" class="form-error">
+            <div *ngIf="f['specialization'].errors['required']">Specialization is required</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="experience">Years of Experience</label>
+          <input id="experience" type="number" formControlName="experience" class="form-control" 
+                 [ngClass]="{'border-danger': submitted && f['experience'].errors}" placeholder="5">
+          <div *ngIf="submitted && f['experience'].errors" class="form-error">
+            <div *ngIf="f['experience'].errors['required']">Experience is required</div>
+            <div *ngIf="f['experience'].errors['min']">Cannot be negative</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group mb-6">
+        <label class="form-label" for="password">Password</label>
+        <input id="password" type="password" formControlName="password" class="form-control"
+               [ngClass]="{'border-danger': submitted && f['password'].errors}" placeholder="••••••••" 
+               autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
+        <div *ngIf="submitted && f['password'].errors" class="form-error">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div *ngIf="f['password'].errors['pattern']">
+            Must be at least 8 characters long, contain at least one uppercase, lowercase, number, and special character
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full" [disabled]="isLoading">
+        <span *ngIf="isLoading">Submitting Application...</span>
+        <span *ngIf="!isLoading">Submit Application</span>
+      </button>
+    </form>
+
+    <div class="text-center mt-6" *ngIf="!successMessage">
+      <p class="text-muted text-sm">
+        Already have an account? <a routerLink="/login" class="text-primary font-medium">Login instead</a>
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="container py-12">
+  <div class="glass-panel p-8 mb-12 text-center animate-fade-in">
+    <h1 class="text-4xl font-extrabold mb-4 text-gradient">How Mediconnect Works</h1>
+    <p class="text-xl text-muted">A comprehensive guide to your healthcare platform.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+    <!-- Patient Help -->
+    <div class="glass-panel p-6 border-primary-light animate-slide-up" style="animation-delay: 0.1s;">
+      <div class="icon-circle mb-4 bg-primary text-white">P</div>
+      <h2 class="text-2xl font-bold mb-4">For Patients</h2>
+      <ul class="feature-list space-y-3">
+        <li><strong>🔍 Search:</strong> Find doctors by specialty directly on the landing page.</li>
+        <li><strong>📅 Booking:</strong> Login to choose a date and time slot for your consult.</li>
+        <li><strong>📂 Records:</strong> Access your doctor-wise grouped medical history anytime.</li>
+        <li><strong>📄 Uploads:</strong> Securely upload your own past reports for doctor review.</li>
+      </ul>
+      <a routerLink="/register-patient" class="btn btn-primary btn-sm mt-6 w-full">Register as Patient</a>
+    </div>
+
+    <!-- Doctor Help -->
+    <div class="glass-panel p-6 border-secondary-light animate-slide-up" style="animation-delay: 0.2s;">
+      <div class="icon-circle mb-4 bg-secondary text-white">D</div>
+      <h2 class="text-2xl font-bold mb-4">For Doctors</h2>
+      <ul class="feature-list space-y-3">
+        <li><strong>🩺 Dashboard:</strong> Manage your daily schedule and upcoming visits.</li>
+        <li><strong>📝 Prescribe:</strong> Issue digital prescriptions that generate auto-summary files.</li>
+        <li><strong>📂 Storage:</strong> Access patient clinical files and upload new reports.</li>
+        <li><strong>⏰ Availability:</strong> Define your working hours for each day of the week.</li>
+      </ul>
+      <a routerLink="/register-doctor" class="btn btn-secondary btn-sm mt-6 w-full">Join MediConnect</a>
+    </div>
+
+    <!-- Contact & Support -->
+    <div id="contact" class="glass-panel p-6 border-accent-light animate-slide-up" style="animation-delay: 0.3s;">
+      <div class="icon-circle mb-4 bg-accent text-white">S</div>
+      <h2 class="text-2xl font-bold mb-4">Support & Features</h2>
+      <ul class="feature-list space-y-3">
+        <li><strong>📞 Phone:</strong> +91 9179677123</li>
+        <li><strong>📧 Email:</strong> Mediconnect@gmail.com</li>
+        <li><strong>🏠 Office:</strong> 123 Healthcare Avenue, Bhopal, India</li>
+        <li><strong>🔐 Privacy:</strong> End-to-end encrypted medical data storage.</li>
+      </ul>
+      <div class="mt-6 p-4 bg-accent-light rounded-md text-sm">
+        Need technical help? Our team is available 24/7 for emergency support.
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-panel p-8 animate-fade-in">
+    <h3 class="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="faq-item">
+        <h4 class="font-bold mb-2">How do I book an appointment?</h4>
+        <p class="text-muted text-sm">Search for a doctor on the home page, select a specialist, login to your patient account, and pick an available slot.</p>
+      </div>
+      <div class="faq-item">
+        <h4 class="font-bold mb-2">Can I view my old prescriptions?</h4>
+        <p class="text-muted text-sm">Yes, all prescriptions are automatically saved in your 'Medical History' tab, grouped by the doctor who issued them.</p>
+      </div>
+    </div>
+  </div>
+</div>

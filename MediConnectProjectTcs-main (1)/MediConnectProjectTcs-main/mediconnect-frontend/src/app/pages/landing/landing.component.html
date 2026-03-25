@@ -1,0 +1,114 @@
+<div class="landing-page">
+
+  <!-- Health Quote Ticker -->
+  <div class="quote-ticker">
+    <div class="quote-inner">
+      <span class="quote-text">{{ healthQuotes[currentQuoteIndex] }}</span>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero relative flex items-center overflow-hidden">
+    <div class="container animate-fade-in z-10">
+      <div class="hero-layout">
+        <!-- Left Content -->
+        <div class="hero-content">
+          <h1 class="mb-6 leading-tight">
+            Your Health, <br/>
+            <span class="text-gradient">Simplified.</span>
+          </h1>
+          <p class="text-muted mb-8 text-lg leading-relaxed">
+            Book appointments with top medical professionals, manage your health records securely, and take control of your well-being with Mediconnect.
+          </p>
+
+          <!-- Search Bar with Suggestions -->
+          <div class="search-wrapper mb-8" style="position: relative;">
+            <div class="search-box glass-panel flex p-2 rounded-full shadow-lg">
+              <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                placeholder="Search doctors, specialities..."
+                class="flex-1 bg-transparent border-none outline-none px-6 text-main"
+                (keyup.enter)="search()"
+                (input)="onSearchInput()"
+                (blur)="hideSuggestions()"
+                autocomplete="off"
+              />
+              <button class="btn btn-primary" (click)="search()">Find Doctor</button>
+            </div>
+            <!-- Suggestions Dropdown -->
+            <div *ngIf="showSuggestions" class="suggestions-dropdown">
+              <div
+                *ngFor="let sug of searchSuggestions"
+                class="suggestion-item"
+                (mousedown)="selectSuggestion(sug)"
+              >
+                <span class="sug-icon">🩺</span>
+                <span class="sug-name">{{ sug.name }}</span>
+                <span class="sug-spec">{{ sug.specialization }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-center stats">
+            <div class="stat-item">
+              <span class="text-2xl font-bold text-main">10k+</span>
+              <span class="text-muted text-sm block">Happy Patients</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="text-2xl font-bold text-main">500+</span>
+              <span class="text-muted text-sm block">Verified Doctors</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="text-2xl font-bold text-main">98%</span>
+              <span class="text-muted text-sm block">Satisfaction Rate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Medical Hero Image -->
+        <div class="hero-image-container">
+          <img src="assets/medical_hero.png" alt="Healthcare illustration" class="hero-img" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Abstract Background Shape -->
+    <div class="hero-bg-shape"></div>
+  </section>
+
+  <!-- Featured Doctors Section -->
+  <section class="featured-section bg-light py-20">
+    <div class="container">
+      <div class="text-center w-full" style="max-width: 600px; margin: 0 auto 3rem;">
+        <h2 class="h2 mb-4">Top Rated Specialists</h2>
+        <p class="text-muted">Connect with our most recommended medical experts across various specializations.</p>
+      </div>
+
+      <div *ngIf="isLoading" class="text-center py-12">
+        <p class="text-muted">Loading specialists...</p>
+      </div>
+
+      <div *ngIf="!isLoading" class="grid grid-cols-4 gap-6">
+        <div class="doctor-card card" *ngFor="let doc of featuredDoctors">
+          <div class="doc-avatar-img mb-4">
+            <img [src]="getDoctorAvatar(doc.specialization)" [alt]="doc.name" class="doc-img" />
+          </div>
+          <h4 class="h4 mb-1">{{ doc.name }}</h4>
+          <p class="text-primary font-medium mb-3">{{ doc.specialization }}</p>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-warning">⭐ {{ doc.rating }}</span>
+            <span class="text-muted text-sm">({{ doc.experience }} Yrs Exp)</span>
+          </div>
+          <button class="btn btn-outline w-full" routerLink="/login">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <div id="search"></div>
+</div>

@@ -1,0 +1,47 @@
+<nav class="navbar glass-panel">
+  <div class="container flex justify-between items-center h-navbar">
+    <a routerLink="/" class="logo flex items-center gap-2">
+      <div class="logo-icon">M</div>
+      <span class="logo-text text-gradient">Mediconnect</span>
+    </a>
+
+    <div class="nav-links flex items-center gap-6">
+      <a routerLink="/" class="nav-item">Home</a>
+      
+      <ng-container *ngIf="!currentUser">
+        <div class="dropdown">
+          <button class="nav-item btn-link">Login</button>
+          <div class="dropdown-content glass-panel animate-slide-up">
+            <a routerLink="/login" [queryParams]="{role: 'patient'}">As Patient</a>
+            <a routerLink="/login" [queryParams]="{role: 'doctor'}">As Doctor</a>
+            <a routerLink="/login" [queryParams]="{role: 'admin'}">As Admin</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="btn btn-primary">Register</button>
+          <div class="dropdown-content glass-panel animate-slide-up">
+            <a routerLink="/register-patient">As Patient</a>
+            <a routerLink="/register-doctor">As Doctor</a>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="currentUser">
+        <a [routerLink]="getDashboardLink()" class="nav-item">Dashboard</a>
+        <div class="user-profile flex items-center gap-2">
+          <div class="avatar">{{ currentUser.name.charAt(0) }}</div>
+          <span class="user-name">
+            <ng-container *ngIf="currentUser.role === 'ROLE_DOCTOR'; else defaultGreeting">
+              Dr. {{ currentUser.name }}
+            </ng-container>
+            <ng-template #defaultGreeting>
+              Hi, {{ currentUser.name.split(' ')[0] }}
+            </ng-template>
+          </span>
+          <button (click)="logout()" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</nav>
